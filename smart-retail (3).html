@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Retail - Kasir Pintar</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{background:#f4f6f9;color:#222}
+#loginPage{min-height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#2563eb,#1e40af)}
+.login-box{width:380px;background:#fff;padding:35px;border-radius:15px;box-shadow:0 15px 40px rgba(0,0,0,.2)}
+.login-logo{text-align:center;margin-bottom:25px}.login-logo h1{color:#2563eb;margin-bottom:8px}.login-logo p{color:#777;font-size:14px}
+.form-group{margin-bottom:18px}.form-group label{display:block;margin-bottom:7px;font-weight:bold}
+.form-group input,.form-group select{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;outline:none}
+.form-group input:focus,.form-group select:focus{border-color:#2563eb}
+.btn{border:none;padding:11px 17px;border-radius:7px;cursor:pointer;font-weight:bold;transition:.2s}.btn:hover{opacity:.85}
+.btn-primary{background:#2563eb;color:#fff}.btn-success{background:#16a34a;color:#fff}.btn-danger{background:#dc2626;color:#fff}.btn-warning{background:#f59e0b;color:#fff}.btn-secondary{background:#64748b;color:#fff}.btn-full{width:100%}
+.login-info{margin-top:15px;padding:10px;background:#eff6ff;border-radius:7px;font-size:12px;color:#1e40af}
+#app{display:none;min-height:100vh}.sidebar{position:fixed;left:0;top:0;width:240px;height:100vh;background:#172554;color:#fff;padding:20px}
+.brand{text-align:center;padding:15px 0 25px;border-bottom:1px solid rgba(255,255,255,.15);margin-bottom:20px}.brand span{font-size:12px;color:#bfdbfe}
+.user-info{background:rgba(255,255,255,.1);padding:12px;border-radius:8px;margin-bottom:20px;font-size:13px}
+.menu{list-style:none}.menu li{margin-bottom:6px}.menu button{width:100%;background:transparent;color:#fff;border:none;padding:12px;text-align:left;border-radius:7px;cursor:pointer;font-size:14px}.menu button:hover,.menu button.active{background:#2563eb}
+.logout-btn{margin-top:30px;width:100%;padding:11px;background:#dc2626;color:#fff;border:none;border-radius:7px;cursor:pointer}
+.content{margin-left:240px;padding:25px}.topbar{background:#fff;padding:18px 25px;border-radius:12px;margin-bottom:25px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.topbar h1{font-size:23px}.date{color:#64748b;font-size:14px}.page{display:none}.page.active{display:block}.page-title{margin-bottom:20px}.page-title h2{margin-bottom:5px}.page-title p{color:#64748b}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:25px}.card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}.card-title{color:#64748b;font-size:14px;margin-bottom:10px}.card-value{font-size:25px;font-weight:bold;color:#1e293b}.card-icon{float:right;font-size:25px}
+.table-container{background:#fff;border-radius:12px;padding:20px;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.05)}.table-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;gap:10px}.search-box{padding:10px 12px;border:1px solid #ddd;border-radius:7px;width:250px}
+table{width:100%;border-collapse:collapse}table th,table td{padding:13px;border-bottom:1px solid #eee;text-align:left}table th{background:#f8fafc;font-size:13px}table td{font-size:14px}
+.badge{padding:5px 9px;border-radius:20px;font-size:11px;font-weight:bold}.badge-success{background:#dcfce7;color:#166534}.badge-warning{background:#fef3c7;color:#92400e}.badge-danger{background:#fee2e2;color:#991b1b}
+.modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.5);justify-content:center;align-items:center;padding:20px}.modal.show{display:flex}.modal-content{width:500px;max-width:100%;background:#fff;border-radius:12px;padding:25px;max-height:90vh;overflow-y:auto}.modal-header{display:flex;justify-content:space-between;margin-bottom:20px}.close{border:none;background:none;font-size:25px;cursor:pointer}
+.transaction-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.transaction-box{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}.transaction-box h3{margin-bottom:18px}.cart-table{margin-top:20px}.total-box{margin-top:20px;border-top:2px solid #eee;padding-top:15px}.total-row{display:flex;justify-content:space-between;margin-bottom:10px}.total-row.final{font-size:20px;font-weight:bold}.payment-box{margin-top:20px}.payment-box input{width:100%;padding:13px;border:1px solid #ddd;border-radius:7px;margin:10px 0}
+.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:20px}.empty{text-align:center;padding:30px;color:#64748b}.action-buttons{display:flex;gap:5px;flex-wrap:wrap}.action-buttons .btn{padding:7px 10px;font-size:11px}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.transaction-grid{grid-template-columns:1fr}.report-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.sidebar{position:relative;width:100%;height:auto}.content{margin-left:0}.cards{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start;gap:10px}}
+</style>
+</head>
+<body>
+
+<div id="loginPage">
+<div class="login-box">
+<div class="login-logo"><h1>🛒 Smart-Retail</h1><p>Aplikasi Kasir Pintar Toko Kelontong</p></div>
+<div class="form-group"><label>Username</label><input type="text" id="username" placeholder="Masukkan username"></div>
+<div class="form-group"><label>Password</label><input type="password" id="password" placeholder="Masukkan password"></div>
+<div class="form-group"><label>Role</label><select id="role"><option value="admin">Admin</option><option value="kasir">Kasir</option></select></div>
+<button class="btn btn-primary btn-full" onclick="login()">Login</button>
+<div class="login-info"><b>Demo Login:</b><br>Admin → admin / admin123<br>Kasir → kasir / kasir123</div>
+</div>
+</div>
+
+<div id="app">
+<aside class="sidebar">
+<div class="brand"><h2>🛒 Smart-Retail</h2><span>Toko Maju Jaya</span></div>
+<div class="user-info">Login sebagai: <strong id="loggedUser">-</strong><br>Role: <strong id="loggedRole">-</strong></div>
+<ul class="menu">
+<li><button class="active" onclick="showPage('dashboard',this)">🏠 Dashboard</button></li>
+<li id="menuProduk"><button onclick="showPage('produk',this)">📦 Kelola Produk</button></li>
+<li><button onclick="showPage('transaksi',this)">🛒 Transaksi Penjualan</button></li>
+<li><button onclick="showPage('cari',this)">🔍 Cari Produk</button></li>
+<li id="menuLaporan"><button onclick="showPage('laporan',this)">📊 Laporan Penjualan</button></li>
+<li><button onclick="showPage('riwayat',this)">📋 Riwayat Transaksi</button></li>
+</ul>
+<button class="logout-btn" onclick="logout()">🚪 Logout</button>
+</aside>
+
+<main class="content">
+<div class="topbar"><div><h1 id="pageHeading">Dashboard</h1><div class="date" id="currentDate">-</div></div><div><b>Smart-Retail</b></div></div>
+
+<section id="dashboard" class="page active">
+<div class="page-title"><h2>Dashboard</h2><p>Selamat datang di sistem kasir Smart-Retail.</p></div>
+<div class="cards">
+<div class="card"><div class="card-icon">📦</div><div class="card-title">Total Produk</div><div class="card-value" id="totalProduk">0</div></div>
+<div class="card"><div class="card-icon">🧾</div><div class="card-title">Total Transaksi</div><div class="card-value" id="totalTransaksi">0</div></div>
+<div class="card"><div class="card-icon">💰</div><div class="card-title">Total Pendapatan</div><div class="card-value" id="totalPendapatan">Rp0</div></div>
+<div class="card"><div class="card-icon">⚠️</div><div class="card-title">Stok Hampir Habis</div><div class="card-value" id="stokHampirHabis">0</div></div>
+</div>
+<div class="table-container"><div class="table-header"><h3>Produk Hampir Habis</h3></div><table><thead><tr><th>ID</th><th>Nama Produk</th><th>Stok</th><th>Status</th></tr></thead><tbody id="lowStockTable"></tbody></table></div>
+</section>
+
+<section id="produk" class="page">
+<div class="page-title"><h2>Kelola Produk</h2><p>Tambah, ubah, dan hapus data produk.</p></div>
+<div class="table-container"><div class="table-header"><button class="btn btn-primary" onclick="openProductModal()">+ Tambah Produk</button><input type="text" class="search-box" placeholder="Cari produk..." onkeyup="renderProducts(this.value)"></div>
+<table><thead><tr><th>ID</th><th>Nama Produk</th><th>Harga Modal</th><th>Harga Jual</th><th>Stok</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="productTable"></tbody></table></div>
+</section>
+
+<section id="transaksi" class="page">
+<div class="page-title"><h2>Transaksi Penjualan</h2><p>Masukkan barang yang dibeli pelanggan.</p></div>
+<div class="transaction-grid">
+<div class="transaction-box"><h3>Tambah Barang</h3>
+<div class="form-group"><label>Produk</label><select id="transactionProduct"><option value="">-- Pilih Produk --</option></select></div>
+<div class="form-group"><label>Jumlah</label><input type="number" id="transactionQty" min="1" value="1"></div>
+<button class="btn btn-primary" onclick="addToCart()">+ Tambahkan ke Keranjang</button>
+</div>
+<div class="transaction-box"><h3>Keranjang Belanja</h3><div id="cartContainer"><div class="empty">Belum ada barang.</div></div>
+<div class="total-box"><div class="total-row"><span>Total Item</span><strong id="cartItems">0</strong></div><div class="total-row final"><span>Total</span><span id="cartTotal">Rp0</span></div></div>
+<div class="payment-box"><label>Uang Pembayaran</label><input type="number" id="paymentAmount" placeholder="Masukkan uang pelanggan"><button class="btn btn-success btn-full" onclick="processPayment()">💳 Bayar</button></div>
+</div>
+</div>
+</section>
+
+<section id="cari" class="page">
+<div class="page-title"><h2>Pencarian Produk</h2><p>Cari berdasarkan nama atau ID produk.</p></div>
+<div class="table-container"><div class="table-header"><input type="text" class="search-box" id="searchProduct" placeholder="Ketik nama atau ID produk..." onkeyup="searchProduct()"></div>
+<table><thead><tr><th>ID</th><th>Nama Produk</th><th>Harga Jual</th><th>Stok</th></tr></thead><tbody id="searchProductTable"></tbody></table></div>
+</section>
+
+<section id="laporan" class="page">
+<div class="page-title"><h2>Laporan Penjualan</h2><p>Informasi penjualan Smart-Retail.</p></div>
+<div class="report-grid"><div class="card"><div class="card-title">Jumlah Transaksi</div><div class="card-value" id="reportTransactions">0</div></div><div class="card"><div class="card-title">Total Penjualan</div><div class="card-value" id="reportSales">Rp0</div></div><div class="card"><div class="card-title">Produk Terlaris</div><div class="card-value" id="bestProduct">-</div></div></div>
+<div class="table-container"><h3 style="margin-bottom:15px">Produk Harus Segera Restock</h3><table><thead><tr><th>ID</th><th>Produk</th><th>Stok</th></tr></thead><tbody id="restockTable"></tbody></table></div>
+</section>
+
+<section id="riwayat" class="page">
+<div class="page-title"><h2>Riwayat Transaksi</h2><p>Semua transaksi yang telah dilakukan.</p></div>
+<div class="table-container"><table><thead><tr><th>ID Transaksi</th><th>Tanggal</th><th>Total Bayar</th><th>Detail</th></tr></thead><tbody id="historyTable"></tbody></table></div>
+</section>
+</main>
+</div>
+
+<div class="modal" id="productModal">
+<div class="modal-content">
+<div class="modal-header"><h2 id="modalTitle">Tambah Produk</h2><button class="close" onclick="closeProductModal()">&times;</button></div>
+<input type="hidden" id="editProductId">
+<div class="form-group"><label>Nama Barang</label><input type="text" id="productName" placeholder="Contoh: Gula 1 Kg"></div>
+<div class="form-group"><label>Harga Modal</label><input type="number" id="productCost" placeholder="Contoh: 15000"></div>
+<div class="form-group"><label>Harga Jual</label><input type="number" id="productPrice" placeholder="Contoh: 18000"></div>
+<div class="form-group"><label>Stok</label><input type="number" id="productStock" placeholder="Contoh: 30"></div>
+<button class="btn btn-primary btn-full" onclick="saveProduct()">Simpan Produk</button>
+</div>
+</div>
+
+<script>
+let products=JSON.parse(localStorage.getItem("smartRetailProducts"))||[
+{id:1,name:"Beras 5 Kg",cost:65000,price:75000,stock:20},
+{id:2,name:"Gula 1 Kg",cost:15000,price:18000,stock:30},
+{id:3,name:"Minyak Goreng",cost:19000,price:22000,stock:25},
+{id:4,name:"Mie Instan",cost:2500,price:3500,stock:100}
+];
+let transactions=JSON.parse(localStorage.getItem("smartRetailTransactions"))||[];
+let cart=[],currentUser=null;
+
+function saveData(){localStorage.setItem("smartRetailProducts",JSON.stringify(products));localStorage.setItem("smartRetailTransactions",JSON.stringify(transactions))}
+function rupiah(n){return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",minimumFractionDigits:0}).format(n)}
+
+function login(){
+const username=document.getElementById("username").value.trim(),password=document.getElementById("password").value.trim(),role=document.getElementById("role").value;
+if(username==="admin"&&password==="admin123"&&role==="admin")currentUser={username:"admin",role:"Admin"};
+else if(username==="kasir"&&password==="kasir123"&&role==="kasir")currentUser={username:"kasir",role:"Kasir"};
+else{return alert("Username, password, atau role salah!")}
+document.getElementById("loginPage").style.display="none";document.getElementById("app").style.display="block";
+document.getElementById("loggedUser").textContent=currentUser.username;document.getElementById("loggedRole").textContent=currentUser.role;
+applyRoleAccess();updateDashboard();renderProducts();renderTransactionProducts();renderHistory();renderSearchProducts();updateDate()
+}
+function applyRoleAccess(){document.getElementById("menuProduk").style.display=currentUser.role==="Kasir"?"none":"block";document.getElementById("menuLaporan").style.display=currentUser.role==="Kasir"?"none":"block"}
+function logout(){if(!confirm("Apakah Anda yakin ingin logout?"))return;currentUser=null;cart=[];document.getElementById("app").style.display="none";document.getElementById("loginPage").style.display="flex";document.getElementById("username").value="";document.getElementById("password").value=""}
+function showPage(id,button){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.getElementById(id).classList.add("active");
+document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active"));if(button)button.classList.add("active");
+const titles={dashboard:"Dashboard",produk:"Kelola Produk",transaksi:"Transaksi Penjualan",cari:"Cari Produk",laporan:"Laporan Penjualan",riwayat:"Riwayat Transaksi"};
+document.getElementById("pageHeading").textContent=titles[id];
+if(id==="dashboard")updateDashboard();if(id==="produk")renderProducts();if(id==="transaksi")renderTransactionProducts();if(id==="cari")renderSearchProducts();if(id==="laporan")updateReport();if(id==="riwayat")renderHistory()
+}
+function updateDate(){document.getElementById("currentDate").textContent=new Date().toLocaleDateString("id-ID",{weekday:"long",year:"numeric",month:"long",day:"numeric"})}
+
+function updateDashboard(){
+const low=products.filter(p=>p.stock<10),revenue=transactions.reduce((a,t)=>a+t.total,0);
+document.getElementById("totalProduk").textContent=products.length;document.getElementById("totalTransaksi").textContent=transactions.length;document.getElementById("totalPendapatan").textContent=rupiah(revenue);document.getElementById("stokHampirHabis").textContent=low.length;
+const tbody=document.getElementById("lowStockTable");tbody.innerHTML=low.length?low.map(p=>`<tr><td>${p.id}</td><td>${p.name}</td><td>${p.stock}</td><td><span class="badge badge-danger">Segera Restock</span></td></tr>`).join(""):`<tr><td colspan="4" class="empty">Tidak ada produk yang hampir habis.</td></tr>`
+}
+function renderProducts(search=""){
+const tbody=document.getElementById("productTable"),k=search.toLowerCase(),list=products.filter(p=>p.name.toLowerCase().includes(k));
+tbody.innerHTML=list.length?list.map(p=>{
+let status=p.stock===0?'<span class="badge badge-danger">Habis</span>':p.stock<10?'<span class="badge badge-warning">Hampir Habis</span>':'<span class="badge badge-success">Tersedia</span>';
+return `<tr><td>${p.id}</td><td>${p.name}</td><td>${rupiah(p.cost)}</td><td>${rupiah(p.price)}</td><td>${p.stock}</td><td>${status}</td><td><div class="action-buttons"><button class="btn btn-warning" onclick="editProduct(${p.id})">Edit</button><button class="btn btn-danger" onclick="deleteProduct(${p.id})">Hapus</button></div></td></tr>`
+}).join(""):`<tr><td colspan="7" class="empty">Produk tidak ditemukan.</td></tr>`
+}
+function openProductModal(){document.getElementById("modalTitle").textContent="Tambah Produk";["editProductId","productName","productCost","productPrice","productStock"].forEach(id=>document.getElementById(id).value="");document.getElementById("productModal").classList.add("show")}
+function closeProductModal(){document.getElementById("productModal").classList.remove("show")}
+function saveProduct(){
+const editId=document.getElementById("editProductId").value,name=document.getElementById("productName").value.trim(),cost=Number(document.getElementById("productCost").value),price=Number(document.getElementById("productPrice").value),stock=Number(document.getElementById("productStock").value);
+if(!name||cost<0||price<0||stock<0)return alert("Mohon isi semua data produk dengan benar.");
+if(editId){const p=products.find(p=>p.id===Number(editId));if(p){p.name=name;p.cost=cost;p.price=price;p.stock=stock}}
+else{products.push({id:products.length?Math.max(...products.map(p=>p.id))+1:1,name,cost,price,stock})}
+saveData();closeProductModal();renderProducts();renderTransactionProducts();renderSearchProducts();updateDashboard();alert("Produk berhasil disimpan!")
+}
+function editProduct(id){
+const p=products.find(p=>p.id===id);if(!p)return;
+document.getElementById("modalTitle").textContent="Edit Produk";document.getElementById("editProductId").value=p.id;document.getElementById("productName").value=p.name;document.getElementById("productCost").value=p.cost;document.getElementById("productPrice").value=p.price;document.getElementById("productStock").value=p.stock;document.getElementById("productModal").classList.add("show")
+}
+function deleteProduct(id){const p=products.find(p=>p.id===id);if(!p)return;if(!confirm(`Yakin menghapus produk "${p.name}"?`))return;products=products.filter(p=>p.id!==id);saveData();renderProducts();renderTransactionProducts();renderSearchProducts();updateDashboard();alert("Produk berhasil dihapus.")}
+function renderTransactionProducts(){
+const select=document.getElementById("transactionProduct");select.innerHTML='<option value="">-- Pilih Produk --</option>';
+products.forEach(p=>{if(p.stock>0)select.innerHTML+=`<option value="${p.id}">${p.name} - ${rupiah(p.price)} (Stok: ${p.stock})</option>`})
+}
+function addToCart(){
+const productId=Number(document.getElementById("transactionProduct").value),quantity=Number(document.getElementById("transactionQty").value);
+if(!productId)return alert("Silakan pilih produk.");if(quantity<=0)return alert("Jumlah pembelian harus lebih dari 0.");
+const p=products.find(p=>p.id===productId),existing=cart.find(i=>i.productId===productId),current=existing?existing.quantity:0;
+if(current+quantity>p.stock)return alert(`ERROR: Stok tidak mencukupi.\n\nStok tersedia: ${p.stock}\nSilakan masukkan jumlah yang lebih kecil.`);
+if(existing){existing.quantity+=quantity;existing.subtotal=existing.quantity*existing.price}else cart.push({productId:p.id,name:p.name,price:p.price,quantity,subtotal:p.price*quantity});
+renderCart()
+}
+function renderCart(){
+const c=document.getElementById("cartContainer");if(!cart.length){c.innerHTML='<div class="empty">Belum ada barang.</div>';document.getElementById("cartItems").textContent="0";document.getElementById("cartTotal").textContent=rupiah(0);return}
+let total=0,items=0;let html='<table class="cart-table"><thead><tr><th>Produk</th><th>Qty</th><th>Subtotal</th><th>Aksi</th></tr></thead><tbody>';
+cart.forEach((i,x)=>{total+=i.subtotal;items+=i.quantity;html+=`<tr><td>${i.name}</td><td>${i.quantity}</td><td>${rupiah(i.subtotal)}</td><td><button class="btn btn-danger" onclick="removeFromCart(${x})">X</button></td></tr>`});html+="</tbody></table>";c.innerHTML=html;document.getElementById("cartItems").textContent=items;document.getElementById("cartTotal").textContent=rupiah(total)
+}
+function removeFromCart(i){cart.splice(i,1);renderCart()}
+function processPayment(){
+if(!cart.length)return alert("Keranjang masih kosong.");
+const total=cart.reduce((a,i)=>a+i.subtotal,0),payment=Number(document.getElementById("paymentAmount").value);
+if(payment<total)return alert("Uang pembayaran tidak mencukupi!");
+const change=payment-total;cart.forEach(i=>{const p=products.find(p=>p.id===i.productId);if(p)p.stock-=i.quantity});
+const id=transactions.length?Math.max(...transactions.map(t=>t.id))+1:1;
+const t={id,date:new Date().toLocaleString("id-ID"),total,payment,change,details:[...cart]};transactions.push(t);saveData();
+let receipt="==============================\n        SMART RETAIL\n        TOKO MAJU JAYA\n==============================\nTransaksi: #"+id+"\n"+t.date+"\n------------------------------\n";
+cart.forEach(i=>receipt+=`${i.name}\n${i.quantity} x ${rupiah(i.price)} = ${rupiah(i.subtotal)}\n`);
+receipt+="------------------------------\nTOTAL    : "+rupiah(total)+"\nBAYAR    : "+rupiah(payment)+"\nKEMBALIAN: "+rupiah(change)+"\n==============================\n     Terima Kasih\n==============================";
+alert(receipt);cart=[];document.getElementById("paymentAmount").value="";renderCart();renderTransactionProducts();updateDashboard();renderHistory();updateReport();renderProducts();renderSearchProducts()
+}
+function searchProduct(){
+const k=document.getElementById("searchProduct").value.toLowerCase(),tbody=document.getElementById("searchProductTable"),list=products.filter(p=>p.name.toLowerCase().includes(k)||p.id.toString().includes(k));
+tbody.innerHTML=list.length?list.map(p=>`<tr><td>${p.id}</td><td>${p.name}</td><td>${rupiah(p.price)}</td><td>${p.stock}</td></tr>`).join(""):`<tr><td colspan="4" class="empty">Produk tidak ditemukan.</td></tr>`
+}
+function renderSearchProducts(){if(document.getElementById("searchProduct"))searchProduct()}
+function renderHistory(){
+const tbody=document.getElementById("historyTable");if(!transactions.length){tbody.innerHTML='<tr><td colspan="4" class="empty">Belum ada transaksi.</td></tr>';return}
+tbody.innerHTML=transactions.slice().reverse().map(t=>`<tr><td>#${t.id}</td><td>${t.date}</td><td>${rupiah(t.total)}</td><td>${t.details.map(i=>`${i.name} (${i.quantity}x)`).join("<br>")}</td></tr>`).join("")
+}
+function updateReport(){
+document.getElementById("reportTransactions").textContent=transactions.length;document.getElementById("reportSales").textContent=rupiah(transactions.reduce((a,t)=>a+t.total,0));
+const sold={};transactions.forEach(t=>t.details.forEach(i=>{if(!sold[i.productId])sold[i.productId]={name:i.name,quantity:0};sold[i.productId].quantity+=i.quantity}));
+const sorted=Object.values(sold).sort((a,b)=>b.quantity-a.quantity);document.getElementById("bestProduct").textContent=sorted.length?sorted[0].name:"-";
+const restock=products.filter(p=>p.stock<10),tbody=document.getElementById("restockTable");tbody.innerHTML=restock.length?restock.map(p=>`<tr><td>${p.id}</td><td>${p.name}</td><td><span class="badge badge-danger">${p.stock} pcs</span></td></tr>`).join(""):`<tr><td colspan="3" class="empty">Semua stok masih aman.</td></tr>`
+}
+saveData();updateDate();
+</script>
+</body>
+</html>
